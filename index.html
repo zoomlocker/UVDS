@@ -1,75 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Water Storage Basin Calculator</title>
+    <title>Water Storage Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
         }
     </style>
 </head>
-
 <body>
 
-    <h1>Water Storage Basin Calculator</h1>
+<div class="container">
+    <h1>Water Storage Calculator</h1>
+    <div class="mb-3">
+        <label for="depthGauge" class="form-label">Enter Depth Gauge Reading:</label>
+        <input type="number" class="form-control" id="depthGauge" placeholder="Enter value in feet">
+    </div>
+    <button class="btn btn-primary w-100" onclick="calculateVolume()">Calculate</button>
+    <div class="mt-4">
+        <h4>Results:</h4>
+        <p>Cumulative Volume (cu.ft): <span id="cumulativeVolume">-</span></p>
+        <p>Remaining Capacity (cu.ft): <span id="capacity">-</span></p>
+        <p>Cumulative Volume (gallons): <span id="cumulativeVolumeGallons">-</span></p>
+        <p>Remaining Capacity (gallons): <span id="capacityGallons">-</span></p>
+    </div>
+</div>
 
-    <label for="depth">Enter Gauge Depth (in ft):</label>
-    <input type="number" id="depth" step="0.1">
-    <button onclick="calculateVolume()">Compute Volume and Capacity</button>
-
-    <h2>Results:</h2>
-    <p>Cumulative Volume: <span id="cumulativeVolume"></span></p>
-    <p>Remaining Capacity: <span id="remainingCapacity"></span></p>
-
-    <script>
-        // Define the lookup table from your Excel data
-        const lookupTable = [
-            { depth: 0, volume: 0 },
-            { depth: 2, volume: 92560 },
-            { depth: 4, volume: 194773 },
-            { depth: 6, volume: 306949 },
-            { depth: 8, volume: 429544 },
-            { depth: 10, volume: 563060 },
-            { depth: 12, volume: 707822 },
-            { depth: 14, volume: 864196 },
-            { depth: 16, volume: 1032685 },
-            { depth: 16.5, volume: 1078713 }
-        ];
-
-        function linearInterpolation(x, x0, y0, x1, y1) {
-            return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
-        }
-
-        function calculateVolume() {
-            const inputDepth = parseFloat(document.getElementById('depth').value);
-            let resultVolume = 0;
-
-            for (let i = 1; i < lookupTable.length; i++) {
-                if (inputDepth >= lookupTable[i - 1].depth && inputDepth <= lookupTable[i].depth) {
-                    resultVolume = linearInterpolation(
-                        inputDepth,
-                        lookupTable[i - 1].depth,
-                        lookupTable[i - 1].volume,
-                        lookupTable[i].depth,
-                        lookupTable[i].volume
-                    );
-                    break;
-                }
-            }
-
-            const remainingCapacity = 864196 - resultVolume;
-            const resultVolumeGallons = resultVolume * 7.48;
-            const remainingCapacityGallons = remainingCapacity * 7.48;
-
-            document.getElementById('cumulativeVolume').innerText = Math.round(resultVolume).toLocaleString() + " cu.ft (" + Math.round(resultVolumeGallons).toLocaleString() + " gallons)";
-            document.getElementById('remainingCapacity').innerText = Math.round(remainingCapacity).toLocaleString() + " cu.ft (" + Math.round(remainingCapacityGallons).toLocaleString() + " gallons)";
-        }
-    </script>
+<script src="script.js"></script>
 
 </body>
-
 </html>
