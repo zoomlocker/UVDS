@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Storage Basin Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Water Storage Basin Calculator</h1>
+
+    <label for="depth">Enter Gauge Depth (in ft):</label>
+    <input type="number" id="depth" step="0.1">
+    <button onclick="calculateVolume()">Compute Volume and Capacity</button>
+
+    <h2>Results:</h2>
+    <p>Cumulative Volume: <span id="cumulativeVolume"></span></p>
+    <p>Remaining Capacity: <span id="remainingCapacity"></span></p>
+
+    <script>
+        // Define the lookup table from your Excel data
+        const lookupTable = [
+            { depth: 0, volume: 0 },
+            { depth: 2, volume: 92560 },
+            { depth: 4, volume: 194773 },
+            { depth: 6, volume: 306949 },
+            { depth: 8, volume: 429544 },
+            { depth: 10, volume: 563060 },
+            { depth: 12, volume: 707822 },
+            { depth: 14, volume: 864196 },
+            { depth: 16, volume: 1032685 },
+            { depth: 16.5, volume: 1078713 }
+        ];
+
+        function linearInterpolation(x, x0, y0, x1, y1) {
+            return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+        }
+
+        function calculateVolume() {
+            const inputDepth = parseFloat(document.getElementById('depth').value);
+            let resultVolume = 0;
+
+            for (let i = 1; i < lookupTable.length; i++) {
+                if (inputDepth >= lookupTable[i - 1].depth && inputDepth <= lookupTable[i].depth) {
+                    resultVolume = linearInterpolation(
+                        inputDepth,
+                        lookupTable[i - 1].depth,
+                        lookupTable[i - 1].volume,
+                        lookupTable[i].depth,
+                        lookupTable[i].volume
+                    );
+                    break;
+                }
+            }
+
+            const remainingCapacity = 864196 - resultVolume;
+            const resultVolumeGallons = resultVolume * 7.48;
+            const remainingCapacityGallons = remainingCapacity * 7.48;
+
+            document.getElementById('cumulativeVolume').innerText = Math.round(resultVolume).toLocaleString() + " cu.ft (" + Math.round(resultVolumeGallons).toLocaleString() + " gallons)";
+            document.getElementById('remainingCapacity').innerText = Math.round(remainingCapacity).toLocaleString() + " cu.ft (" + Math.round(remainingCapacityGallons).toLocaleString() + " gallons)";
+        }
+    </script>
+
+</body>
+
+</html>
